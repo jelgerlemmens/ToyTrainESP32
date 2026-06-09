@@ -6,55 +6,66 @@
 // ── Configuration ─────────────────────────────────────────────────────────────
 #define WIFI_SSID       "toytrains"
 #define WIFI_PASS       "toytrain"
-#define SPRING_HOST     "10.42.0.1"   // Pi's IP on the toytrains AP (wlan1)
+#define SPRING_HOST     "10.42.0.1"
 #define SPRING_PORT     80
 #define CAB_NAME        "WiFiLoco1"
 
 #define UDP_PORT        4210
 #define HEARTBEAT_MS    30000
 
-// ── Motor pins — TLE5206 IN1/IN2 via level shifters ──────────────────────────
-// Defaults for rev2 PCB (Super Mini ESP32-C3); wroom32 env overrides via build_flags
+// ── Motor pins — TB67H450FNG IN1/IN2, direct 3.3V GPIO (no level shifters) ────
+// wroom32 env overrides these via build_flags (-DPIN_IN1=13 -DPIN_IN2=14)
 #ifndef PIN_IN1
-#define PIN_IN1         7
+#define PIN_IN1         7   // GPIO7 → TB67H IN1
 #endif
 #ifndef PIN_IN2
-#define PIN_IN2         6
+#define PIN_IN2         6   // GPIO6 → TB67H IN2
 #endif
 
-// ── Function pins — BSS138 low-side GND switch, HIGH = ON ─────────────────────
-#define PIN_LIGHTS      2
-#define PIN_HORN        3
+// ── Function output pins — BSS138 low-side switch, HIGH = load ON ─────────────
+#define PIN_F1          0   // Lights
+#define PIN_F2          1   // Horn
+#define PIN_F3          2
+#define PIN_F4          3
+
+// ── Status / error LEDs ───────────────────────────────────────────────────────
+#define PIN_ERROR_LED   5   // Red,    active HIGH
+#define PIN_STATUS_LED  10  // Yellow, active HIGH
+
+// ── Thermistor — ADC1_CH4 ─────────────────────────────────────────────────────
+#define PIN_THERMISTOR  4
+
 #define HORN_PULSE_MS   150
 
 // ── State ─────────────────────────────────────────────────────────────────────
 WiFiUDP udp;
 unsigned long lastHeartbeat = 0;
 
-int  motorSpeed = 0;    // 0-126
-int  motorDir   = 1;    // 1=forward 0=reverse
+int  motorSpeed = 0;    // 0–100
+int  motorDir   = 1;    // 1=forward, 0=reverse
 bool lightsOn   = false;
 bool soundOn    = false;
 
-// ── Motor control — locked anti-phase (LAP) drive, mirrors DccDecoder_TLE5206 ─
-// Stop:    IN1=H, IN2=H → locked brake (both high-side, OUT=VS, no current)
-// Forward: IN2=PWM 127→255 as speed 0→100, IN1=LOW
-// Reverse: IN2=PWM 127→0 as speed 0→100, IN1=LOW
+// ── Motor control — TB67H450FNG ───────────────────────────────────────────────
+// Stop/brake: IN1=H, IN2=H  →  brake LOW (both outputs pulled to GND)
+// Forward:    IN1=H constant,  IN2=PWM  (duty 0→255 = speed 0→100%)
+// Reverse:    IN2=H constant,  IN1=PWM  (duty 0→255 = speed 0→100%)
+// L,L is never applied — would enter Hi-Z/standby after 1.5 ms
 void applyMotor() {
     if (motorSpeed <= 0) {
         digitalWrite(PIN_IN1, HIGH);
         digitalWrite(PIN_IN2, HIGH);
-        Serial.printf("Motor: speed=%d dir=%d duty=BRAKE\n", motorSpeed, motorDir);
+        Serial.printf("Motor: BRAKE\n");
         return;
     }
-    int duty;
+    int duty = map(motorSpeed, 0, 100, 0, 255);
     if (motorDir == 1) {
-        duty = map(motorSpeed, 0, 100, 127, 0);
+        digitalWrite(PIN_IN1, HIGH);
+        analogWrite(PIN_IN2, duty);
     } else {
-        duty = map(motorSpeed, 0, 100, 127, 255);
+        digitalWrite(PIN_IN2, HIGH);
+        analogWrite(PIN_IN1, duty);
     }
-    analogWrite(PIN_IN2, duty);
-    digitalWrite(PIN_IN1, LOW);
     Serial.printf("Motor: speed=%d dir=%d duty=%d\n", motorSpeed, motorDir, duty);
 }
 
@@ -72,13 +83,13 @@ void parseCommand(const String& payload) {
     lightsOn   = payload.substring(p2 + 1, p3) == "true";
     soundOn    = payload.substring(p3 + 1) == "true";
     Serial.printf("CMD recv: speed=%d dir=%d lights=%d sound=%d\n",
-                  motorSpeed, motorDir, lightsOn, soundOn);
+                  motorSpeed, motorDir, (int)lightsOn, (int)soundOn);
     applyMotor();
-    digitalWrite(PIN_LIGHTS, lightsOn ? HIGH : LOW);
+    digitalWrite(PIN_F1, lightsOn ? HIGH : LOW);
     if (soundOn) {
-        digitalWrite(PIN_HORN, HIGH);
+        digitalWrite(PIN_F2, HIGH);
         delay(HORN_PULSE_MS);
-        digitalWrite(PIN_HORN, LOW);
+        digitalWrite(PIN_F2, LOW);
     }
 }
 
@@ -99,10 +110,13 @@ void registerWithServer() {
             registered = true;
         } else {
             Serial.printf("Registration failed (HTTP %d), retrying in 5s...\n", code);
+            digitalWrite(PIN_ERROR_LED, HIGH);
             delay(5000);
         }
         http.end();
     }
+    digitalWrite(PIN_ERROR_LED, LOW);
+    digitalWrite(PIN_STATUS_LED, HIGH);
 }
 
 // ── Heartbeat ─────────────────────────────────────────────────────────────────
@@ -116,11 +130,13 @@ void sendHeartbeat() {
     if (code == 200) {
         parseCommand(http.getString());
         Serial.println("Heartbeat OK");
+        digitalWrite(PIN_ERROR_LED, LOW);
     } else if (code == 404) {
         Serial.println("Evicted — re-registering");
         registerWithServer();
     } else {
         Serial.printf("Heartbeat failed: HTTP %d\n", code);
+        digitalWrite(PIN_ERROR_LED, HIGH);
     }
     http.end();
 }
@@ -130,15 +146,21 @@ void setup() {
     Serial.begin(115200);
     while (!Serial && millis() < 3000) { delay(10); }
 
+    // Motor — brake from first moment
     pinMode(PIN_IN1, OUTPUT);
     pinMode(PIN_IN2, OUTPUT);
     digitalWrite(PIN_IN1, HIGH);
-    digitalWrite(PIN_IN2, HIGH);   // locked brake from the first moment
+    digitalWrite(PIN_IN2, HIGH);
 
-    pinMode(PIN_LIGHTS, OUTPUT);
-    pinMode(PIN_HORN, OUTPUT);
-    digitalWrite(PIN_LIGHTS, LOW);
-    digitalWrite(PIN_HORN, LOW);
+    // Function outputs
+    pinMode(PIN_F1, OUTPUT); digitalWrite(PIN_F1, LOW);
+    pinMode(PIN_F2, OUTPUT); digitalWrite(PIN_F2, LOW);
+    pinMode(PIN_F3, OUTPUT); digitalWrite(PIN_F3, LOW);
+    pinMode(PIN_F4, OUTPUT); digitalWrite(PIN_F4, LOW);
+
+    // LEDs
+    pinMode(PIN_ERROR_LED,  OUTPUT); digitalWrite(PIN_ERROR_LED,  LOW);
+    pinMode(PIN_STATUS_LED, OUTPUT); digitalWrite(PIN_STATUS_LED, LOW);
 
     WiFi.begin(WIFI_SSID, WIFI_PASS);
     Serial.print("Connecting to " WIFI_SSID);
@@ -148,7 +170,7 @@ void setup() {
     }
     Serial.println("\nIP: " + WiFi.localIP().toString());
 
-    registerWithServer();
+    registerWithServer();   // turns STATUS_LED on when done
 
     udp.begin(UDP_PORT);
     Serial.printf("UDP listening on port %d\n", UDP_PORT);
