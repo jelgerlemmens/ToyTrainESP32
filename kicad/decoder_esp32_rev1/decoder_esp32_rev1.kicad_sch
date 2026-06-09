@@ -4212,6 +4212,16 @@
 	)
 	(wire
 		(pts
+			(xy 104.14 93.98) (xy 119.38 93.98)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "36c1920b-1005-4c6e-8053-fe6d7efeefe6")
+	)
+	(wire
+		(pts
 			(xy 252.73 100.33) (xy 257.81 100.33)
 		)
 		(stroke
@@ -4512,16 +4522,6 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 93.98) (xy 119.38 93.98)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8d8c0978-07a8-410c-9815-f70469b5552b")
-	)
-	(wire
-		(pts
 			(xy 81.28 34.29) (xy 87.63 34.29)
 		)
 		(stroke
@@ -4649,6 +4649,16 @@
 			(type default)
 		)
 		(uuid "a33fc668-5200-41e3-ada3-0be4bf579cbe")
+	)
+	(wire
+		(pts
+			(xy 111.76 91.44) (xy 119.38 91.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a4aa769d-991d-414b-b1bb-bfe79e8e9888")
 	)
 	(wire
 		(pts
@@ -4902,16 +4912,6 @@
 	)
 	(wire
 		(pts
-			(xy 111.76 113.03) (xy 111.76 93.98)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "eb4172ff-264e-4118-a668-4987041826d0")
-	)
-	(wire
-		(pts
 			(xy 138.43 34.29) (xy 138.43 39.37)
 		)
 		(stroke
@@ -4949,6 +4949,16 @@
 			(type default)
 		)
 		(uuid "f30ed76f-57d3-41f7-8436-fc9d9a8fbb6a")
+	)
+	(wire
+		(pts
+			(xy 111.76 91.44) (xy 111.76 113.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f3e9692a-dff9-4579-ae66-22838f4288fb")
 	)
 	(wire
 		(pts
@@ -6666,7 +6676,7 @@
 	)
 	(symbol
 		(lib_id "Device:LED")
-		(at 107.95 91.44 0)
+		(at 92.71 93.98 0)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6676,7 +6686,7 @@
 		(dnp no)
 		(uuid "4c6383f1-39a7-49d2-ab58-d09ba3e20149")
 		(property "Reference" "D8"
-			(at 107.442 92.456 90)
+			(at 92.202 94.996 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6687,7 +6697,7 @@
 			)
 		)
 		(property "Value" "ERROR"
-			(at 100.584 88.646 90)
+			(at 85.344 91.186 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -6698,7 +6708,7 @@
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_1206_3216Metric_Pad1.42x1.75mm_HandSolder"
-			(at 107.95 91.44 0)
+			(at 92.71 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6709,7 +6719,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 107.95 91.44 0)
+			(at 92.71 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6720,7 +6730,7 @@
 			)
 		)
 		(property "Description" "Light emitting diode"
-			(at 107.95 91.44 0)
+			(at 92.71 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6731,7 +6741,7 @@
 			)
 		)
 		(property "Sim.Pins" "1=K 2=A"
-			(at 107.95 91.44 0)
+			(at 92.71 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6758,7 +6768,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 104.14 91.44 270)
+		(at 88.9 93.98 270)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -6769,7 +6779,7 @@
 		(fields_autoplaced yes)
 		(uuid "5037d47f-f2fd-42a4-ab8c-30d5987eb43b")
 		(property "Reference" "#PWR017"
-			(at 97.79 91.44 0)
+			(at 82.55 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6780,7 +6790,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 99.06 91.44 0)
+			(at 83.82 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6791,7 +6801,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 104.14 91.44 0)
+			(at 88.9 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6802,7 +6812,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 104.14 91.44 0)
+			(at 88.9 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6813,7 +6823,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 104.14 91.44 0)
+			(at 88.9 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -6997,7 +7007,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 115.57 91.44 270)
+		(at 100.33 93.98 270)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -7007,7 +7017,7 @@
 		(dnp no)
 		(uuid "5f3d87d4-47e8-44d7-a55e-d7d9a15d9be1")
 		(property "Reference" "R5"
-			(at 114.554 91.44 90)
+			(at 99.314 93.98 90)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -7018,7 +7028,7 @@
 			)
 		)
 		(property "Value" "Red ERROR 150Ohm"
-			(at 114.3001 93.98 0)
+			(at 99.0601 96.52 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7030,7 +7040,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder"
-			(at 115.57 89.662 90)
+			(at 100.33 92.202 90)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7041,7 +7051,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 115.57 91.44 0)
+			(at 100.33 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -7052,7 +7062,7 @@
 			)
 		)
 		(property "Description" "Resistor"
-			(at 115.57 91.44 0)
+			(at 100.33 93.98 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
