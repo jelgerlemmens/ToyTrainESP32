@@ -1,0 +1,141 @@
+
+(kicad_symbol_lib (version 20211014) (generator kicad_symbol_editor)
+  (symbol "TLE5206-2G" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
+    (property "Reference" "U" (id 0) (at -7.63801 11.4547 0)
+      (effects (font (size 1.27 1.27)) (justify bottom left))
+    )
+    (property "Value" "TLE5206-2G" (id 1) (at -7.61728 -12.7125 0)
+      (effects (font (size 1.27 1.27)) (justify bottom left))
+    )
+    (property "Footprint" "TLE5206-2G:DPAK127P1500X440-8N" (id 2) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MF" "Infineon Technologies" (id 4) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Description" "\n                        \n                            - Motor Driver DMOS Parallel PG-DSO-20-12\n                        \n" (id 5) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Package" "TO-263 Infineon" (id 6) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Price" "None" (id 7) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Check_prices" "https://www.snapeda.com/parts/TLE5206-2G/Infineon/view-part/?ref=eda" (id 8) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "STANDARD" "IPC7351B" (id 9) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "PARTREV" "APRIL 2018" (id 10) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "SnapEDA_Link" "https://www.snapeda.com/parts/TLE5206-2G/Infineon/view-part/?ref=snap" (id 11) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MP" "TLE5206-2G" (id 12) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Availability" "In Stock" (id 13) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MANUFACTURER" "Texas Instruments" (id 14) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (symbol "TLE5206-2G_0_0"
+      (polyline
+        (pts (xy -7.62 10.16) (xy 7.62 10.16)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 7.62 10.16) (xy 7.62 1.27)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 7.62 1.27) (xy 7.62 -1.27)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 7.62 -1.27) (xy 7.62 -3.81)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 7.62 -3.81) (xy 7.62 -6.35)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 7.62 -6.35) (xy 7.62 -10.16)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 7.62 -10.16) (xy -7.62 -10.16)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -7.62 -10.16) (xy -7.62 -6.35)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -7.62 -6.35) (xy -7.62 -3.81)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -7.62 -3.81) (xy -7.62 -1.27)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -7.62 -1.27) (xy -7.62 1.27)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy -7.62 1.27) (xy -7.62 10.16)) (stroke (width 0.1524))
+      )
+      (pin power_in line (at 10.16 7.62 180.0) (length 2.54)
+        (name "VS"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "6"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin input line (at -10.16 0.0 0) (length 2.54)
+        (name "IN2"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "5"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin output line (at 10.16 -2.54 180.0) (length 2.54)
+        (name "EF"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "2"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin power_in line (at 10.16 -7.62 180.0) (length 2.54)
+        (name "GND"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "4"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin input line (at -10.16 2.54 0) (length 2.54)
+        (name "IN1"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "3"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin output line (at 10.16 2.54 180.0) (length 2.54)
+        (name "OUT1"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "1"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin output line (at 10.16 0.0 180.0) (length 2.54)
+        (name "OUT2"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "7"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+    )
+  )
+)

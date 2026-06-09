@@ -1,0 +1,4 @@
+.pio/
+kicad/**/.history/
+kicad/**/*-backups/
+**/*.lck

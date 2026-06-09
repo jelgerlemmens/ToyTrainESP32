@@ -13,13 +13,19 @@
 #define UDP_PORT        4210
 #define HEARTBEAT_MS    30000
 
-// ── Motor pins — TLE5206 IN1/IN2 (XIAO D10/D9 = GPIO10/GPIO9, per schematic) ─
-#define PIN_IN1         10
-#define PIN_IN2         9
-#define PWM_CHANNEL_IN1 0
-#define PWM_CHANNEL_IN2 1
-#define PWM_FREQ        1000
-#define PWM_RES         8   // 8-bit: 0-255
+// ── Motor pins — TLE5206 IN1/IN2 via level shifters ──────────────────────────
+// Defaults for rev2 PCB (Super Mini ESP32-C3); wroom32 env overrides via build_flags
+#ifndef PIN_IN1
+#define PIN_IN1         7
+#endif
+#ifndef PIN_IN2
+#define PIN_IN2         6
+#endif
+
+// ── Function pins — BSS138 low-side GND switch, HIGH = ON ─────────────────────
+#define PIN_LIGHTS      2
+#define PIN_HORN        3
+#define HORN_PULSE_MS   150
 
 // ── State ─────────────────────────────────────────────────────────────────────
 WiFiUDP udp;
@@ -30,16 +36,25 @@ int  motorDir   = 1;    // 1=forward 0=reverse
 bool lightsOn   = false;
 bool soundOn    = false;
 
-// ── Motor control ─────────────────────────────────────────────────────────────
+// ── Motor control — locked anti-phase (LAP) drive, mirrors DccDecoder_TLE5206 ─
+// Stop:    IN1=H, IN2=H → locked brake (both high-side, OUT=VS, no current)
+// Forward: IN2=PWM 127→255 as speed 0→100, IN1=LOW
+// Reverse: IN2=PWM 127→0 as speed 0→100, IN1=LOW
 void applyMotor() {
-    int duty = map(motorSpeed, 0, 126, 0, 255);
-    if (motorDir == 1) {
-        ledcWrite(PWM_CHANNEL_IN1, duty);
-        ledcWrite(PWM_CHANNEL_IN2, 0);
-    } else {
-        ledcWrite(PWM_CHANNEL_IN1, 0);
-        ledcWrite(PWM_CHANNEL_IN2, duty);
+    if (motorSpeed <= 0) {
+        digitalWrite(PIN_IN1, HIGH);
+        digitalWrite(PIN_IN2, HIGH);
+        Serial.printf("Motor: speed=%d dir=%d duty=BRAKE\n", motorSpeed, motorDir);
+        return;
     }
+    int duty;
+    if (motorDir == 1) {
+        duty = map(motorSpeed, 0, 100, 127, 0);
+    } else {
+        duty = map(motorSpeed, 0, 100, 127, 255);
+    }
+    analogWrite(PIN_IN2, duty);
+    digitalWrite(PIN_IN1, LOW);
     Serial.printf("Motor: speed=%d dir=%d duty=%d\n", motorSpeed, motorDir, duty);
 }
 
@@ -59,6 +74,12 @@ void parseCommand(const String& payload) {
     Serial.printf("CMD recv: speed=%d dir=%d lights=%d sound=%d\n",
                   motorSpeed, motorDir, lightsOn, soundOn);
     applyMotor();
+    digitalWrite(PIN_LIGHTS, lightsOn ? HIGH : LOW);
+    if (soundOn) {
+        digitalWrite(PIN_HORN, HIGH);
+        delay(HORN_PULSE_MS);
+        digitalWrite(PIN_HORN, LOW);
+    }
 }
 
 // ── Registration ──────────────────────────────────────────────────────────────
@@ -109,12 +130,15 @@ void setup() {
     Serial.begin(115200);
     while (!Serial && millis() < 3000) { delay(10); }
 
-    ledcSetup(PWM_CHANNEL_IN1, PWM_FREQ, PWM_RES);
-    ledcAttachPin(PIN_IN1, PWM_CHANNEL_IN1);
-    ledcSetup(PWM_CHANNEL_IN2, PWM_FREQ, PWM_RES);
-    ledcAttachPin(PIN_IN2, PWM_CHANNEL_IN2);
-    ledcWrite(PWM_CHANNEL_IN1, 0);
-    ledcWrite(PWM_CHANNEL_IN2, 0);
+    pinMode(PIN_IN1, OUTPUT);
+    pinMode(PIN_IN2, OUTPUT);
+    digitalWrite(PIN_IN1, HIGH);
+    digitalWrite(PIN_IN2, HIGH);   // locked brake from the first moment
+
+    pinMode(PIN_LIGHTS, OUTPUT);
+    pinMode(PIN_HORN, OUTPUT);
+    digitalWrite(PIN_LIGHTS, LOW);
+    digitalWrite(PIN_HORN, LOW);
 
     WiFi.begin(WIFI_SSID, WIFI_PASS);
     Serial.print("Connecting to " WIFI_SSID);
