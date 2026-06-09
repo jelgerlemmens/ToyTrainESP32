@@ -131,6 +131,9 @@ void sendHeartbeat() {
         parseCommand(http.getString());
         Serial.println("Heartbeat OK");
         digitalWrite(PIN_ERROR_LED, LOW);
+        digitalWrite(PIN_STATUS_LED, LOW);
+        delay(80);
+        digitalWrite(PIN_STATUS_LED, HIGH);
     } else if (code == 404) {
         Serial.println("Evicted — re-registering");
         registerWithServer();
